@@ -16,11 +16,12 @@ class Product(models.Model):
     )
     Category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=64, null=True)
+    img_file = models.ImageField(null=True, blank=True)
     size = models.CharField(max_length=64, null=True, choices=SIZE, blank=True)
     price = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):
-        return f"{self.tags} - {self.name} - {self.size} - {self.price}"
+        return f"{self.Category} - {self.name} - {self.size} - {self.price}"
 
 class Order(models.Model):
     STATUS = (

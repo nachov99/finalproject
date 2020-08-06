@@ -1,0 +1,12 @@
+{% extends "ecommerce/base.html" %}
+{% load static %}
+
+{% block title %}
+    Orders
+{% endblock %}
+
+{% block body %}
+{% for order in orders %}
+{{order}}
+{% endfor %}
+{% endblock %}
