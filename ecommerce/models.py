@@ -36,3 +36,12 @@ class Order(models.Model):
     status = models.CharField(max_length=64, null=True, choices=STATUS, default='Pending')
     def __str__(self):
         return f" Order Id: {self.id} - Customer: {self.customer} - Status: {self.status}"
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product_id = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    rating = models.IntegerField()
+    msg = models.CharField(max_length=256)
+
+    def __str__(self):
+        return f"{self.user_id} {self.product_id} {self.rating} {self.msg}"

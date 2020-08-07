@@ -1,0 +1,63 @@
+{% extends "ecommerce/base.html" %}
+{% load static %}
+
+{% block body%}
+
+    <section class="ftco-section">
+    	<div class="container">
+    		<div class="row">
+    			<div class="col-lg-6 mb-5 ftco-animate">
+    				<a href="{{ product.img_file.url }}" class="image-popup"><img src="{{ product.img_file.url }}" class="img-fluid" alt="Colorlib Template"></a>
+    			</div>
+    			<div class="col-lg-6 product-details pl-md-5 ftco-animate">
+    				<h3>{{ product.name }}</h3>
+    				<div class="rating d-flex">
+							<p class="text-left mr-4">
+								<a href="#" class="mr-2" style="color: #000;">{{rating}} <span style="color: #bbb;">Avg Rating</span></a>
+							</p>
+						</div>
+					<p class="price"><span>${{ product.price }}</span></p>
+					<p><a href="{% url 'add_cart' product.id %}" class="btn btn-black py-3 px-5">Add to Cart</a></p>
+          	</div>
+    			</div>
+    		</div>
+    	</div>
+    </section>
+
+  <script>
+		$(document).ready(function(){
+
+		var quantitiy=0;
+		   $('.quantity-right-plus').click(function(e){
+		        
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+		            
+		            $('#quantity').val(quantity + 1);
+
+		          
+		            // Increment
+		        
+		    });
+
+		     $('.quantity-left-minus').click(function(e){
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+		      
+		            // Increment
+		            if(quantity>0){
+		            $('#quantity').val(quantity - 1);
+		            }
+		    });
+		    
+		});
+	</script>
+{% endblock %}
