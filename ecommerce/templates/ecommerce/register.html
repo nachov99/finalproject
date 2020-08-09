@@ -1,0 +1,40 @@
+{% extends "ecommerce/base.html" %}
+{% load static %}
+
+{% block body%}
+<section class="ftco-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-xl-8 ftco-animate">
+            <form action="{% url 'register' %}" method="POST" class="billing-form">
+                {% csrf_token %}
+                <h3 class="mb-4 billing-heading">Login</h3>
+                <div class="">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="firstname">Username</label>
+                            {{form.username}}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="emailaddress">Email Address</label>
+                                {{form.email}}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="lastname">Password</label>
+                            {{form.password1}}
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">Confirm Password</label>
+                            {{form.password2}}
+                        </div>
+                        <a href="{% url 'register' %}"><p>Create an account?</p></a>
+                        <input type="submit" class="btn btn-primary py-3 px-4" value="Register">
+                    </div>
+                </div>
+            </form>
+
+{% endblock %}

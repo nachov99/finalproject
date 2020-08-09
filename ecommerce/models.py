@@ -34,8 +34,9 @@ class Order(models.Model):
     product = models.ManyToManyField(Product)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     status = models.CharField(max_length=64, null=True, choices=STATUS, default='Pending')
+    paid = models.BooleanField(default=False)
     def __str__(self):
-        return f" Order Id: {self.id} - Customer: {self.customer} - Status: {self.status}"
+        return f" Order Id: {self.id} - Customer: {self.customer} - Status: {self.status} - Paid: {self.paid} "
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

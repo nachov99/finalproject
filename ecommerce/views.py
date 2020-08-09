@@ -1,4 +1,5 @@
-from django.http import HttpResponseRedirect
+import json
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -23,6 +24,12 @@ def home(request):
             'user': request.user,
         }
         return render(request, "ecommerce/index.html", context)
+
+'''
+
+AUTHENTICATION
+
+'''
 
 def login_view(request):
     if request.method == 'POST':
@@ -55,6 +62,59 @@ def register(request):
     context = {'form':form}
     return render(request, "ecommerce/register.html", context)
 
+'''
+
+PRODUCT MANAGEMENT
+
+'''
+
+@login_required
+def product_single(request, product_id):
+    product = Product.objects.get(pk=product_id)
+    comments = Comment.objects.filter(product_id=product_id)
+    rating = Comment.objects.filter(product_id=product_id).aggregate(Avg('rating'))
+    rating2 = rating.get('rating__avg')
+
+    chkcomment = Comment.objects.filter(user=request.user, product_id=product_id)
+
+    context = {
+        'categories': Category.objects.all(),
+        'product':product,
+        'comments': comments,
+        'rating': rating2,
+        'chkcomment': chkcomment,
+        }
+
+    return render(request, "ecommerce/product-single.html", context)
+
+@login_required
+def categories(request, category_id):
+    products = Product.objects.filter(Category=category_id)
+
+    context = {
+        'categories': Category.objects.all(),
+        'products': products,
+    }
+    return render(request, "ecommerce/category.html", context)
+    
+
+''' ADD COMMENT '''
+@login_required
+def comment(request, product_id):
+    product = Product.objects.get(pk = product_id)
+    msg = request.POST.get('msg')
+    rating = int(float(request.POST.get('rating')))
+    user = request.user
+    com = Comment(user=user, product_id=product, rating=rating, msg=msg)
+    com.save()
+    return redirect('home')
+
+'''
+
+CART  - CHECKOUT - PAYMENT
+
+'''
+
 @login_required
 def add_cart(request, product_id):
     product, created = Product.objects.get_or_create(Product, pk=product_id)
@@ -62,69 +122,47 @@ def add_cart(request, product_id):
     order.product.add(product_id)
     return HttpResponseRedirect(reverse('home'))
 
+@login_required
+def delete_cart(request, product_id):
+    product, created = Product.objects.get_or_create(Product, pk=product_id)
+    order, created = Order.objects.get_or_create(customer=request.user)
+    order.product.remove(product_id)
+    return redirect('cart')
 
+@login_required
 def cart(request):
-    order = Order.objects.filter(customer=request.user)
     context = {
-        'order': order,
+        'categories': Category.objects.all(),
+        'user': request.user,
+        'orders': Order.objects.all(),
     }
     return render(request, "ecommerce/cart.html", context)
 
 @login_required
-def category_products(request, category_id):
-    product_list = Product.objects.filter(Category = category_id)
-    Categories = Category.objects.all()
+def checkout(request):
+
+    orders = Order.objects.all()
+
+    subtotal = []
+
+    for order in orders:
+        if order.customer == request.user:
+            for data in order.product.all() :
+                subtotal.append(data.price)
+
+    total = int(sum(subtotal))
+
+    vat = 0.21
+
+    total_vat = total + (total*vat)
+
+    print('AAAAAAAAAAAA', subtotal)
+    print('THE TOTAL IS: ', total)
+    print('THE TOTAL + VAT IS: ', total_vat)
+
     context = {
-        'products': product_list,
-        'categories': Categories
+        'categories': Category.objects.all(),
+        'total': total,
+        'total_vat': total_vat,
     }
-    return render(request, "ecommerce/category_products.html", context)
-
-@login_required
-def order_list(request):
-    Orders = Order.objects.all()
-
-    context = {
-        'orders': Orders,
-    }
-    return render(request, "ecommerce/orders.html", context)
-
-@login_required
-def add_product(request):
-
-    form = ProductForm()
-    if request.method == 'POST':
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/')
-    context = {'form': form}
-
-    return render(request, "ecommerce/add_product.html", context)
-
-@login_required
-def product_single(request, product_id):
-    product = Product.objects.get(pk=product_id)
-    comments = Comment.objects.all()
-    rating = Comment.objects.filter(product_id=product_id).aggregate(Avg('rating'))
-    rating2 = rating.get('rating__avg')
-    context = {
-        'product':product,
-        'comments': comments,
-        'rating': rating2,
-        }
-
-    return render(request, "ecommerce/product-single.html", context)
-
-''' ADD COMMENT '''
-@login_required
-def comment(request, product_id):
-    product = Product.objects.get(pk = product_id)
-    msg = request.POST.get('msg')
-    rating = int(request.POST.get('rating'))
-    user = request.user
-    com = Comment(user=user, product_id=product, rating=rating, msg=msg)
-    com.save()
-    return redirect('home')
-
-
+    return render(request, "ecommerce/checkout.html", context)

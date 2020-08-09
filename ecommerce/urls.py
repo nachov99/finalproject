@@ -11,12 +11,12 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("logout", views.logout_view, name="logout_view"),
     path("add/<product_id>", views.add_cart, name="add_cart"),
-    path("category/<category_id>", views.category_products, name='category_products'),
-    path("Orders", views.order_list, name="order_list"),
-    path("addproduct", views.add_product, name="add_product"),
     path("product/<product_id>", views.product_single, name='product_single'),
     path("product/comment/<product_id>", views.comment, name="comment"),
     path("cart", views.cart, name='cart'),
+    path('delete/<product_id>', views.delete_cart, name='delete_cart'),
+    path('checkout', views.checkout, name='checkout'),
+    path('category/<category_id>', views.categories, name='categories'),
 
 ]
 

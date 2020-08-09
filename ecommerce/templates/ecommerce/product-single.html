@@ -22,6 +22,66 @@
     			</div>
     		</div>
     	</div>
+	</section>
+	<section class="ftco-section bg-light">
+    	<div class="container">
+				<div class="row justify-content-center mb-3 pb-3">
+          <div class="col-md-12 heading-section text-center ftco-animate">
+            <h2 class="mb-4">Comments</h2>
+          </div>
+        </div>   		
+		</div>
+		{% if chkcomment %}
+			<h1>Only one comment per user!</h1>
+		{% else %}
+			<form action="{% url 'comment' product.id %}" method='POST' class="billing-form d-flex justify-content-center">
+				{% csrf_token %}
+				<div class="row align-items-end">
+					<div class="col-md-6">
+						<div class="form-group" style="width: 350px;">
+							<label for="firstname">Comment</label>
+							<input type="text" class="form-control" placeholder="" name="msg">
+						</div>
+					</div>
+					<div class="w-100"></div>
+					<div class="col-md-12" >
+						<div class="form-group" style="width: 350px;">
+							<label for="country">Rating</label>
+							<div class="select-wrap">
+								<div class="icon"><span class="ion-ios-arrow-down"></span></div>
+								<select name="rating" id="" class="form-control">
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<input type="submit" class="btn btn-primary py-3 px-4" value="Add comment">
+				</div>
+			</form><!-- END -->
+		{% endif %}
+
+    	<div class="container">
+    		<div class="row">
+				{% for comment in comments %}
+    			<div class="col-sm col-md-6 col-lg ftco-animate">
+    				<div class="product">
+    					<div class="text py-3 px-3">
+    						<h3>{{ comment.user }}</h3>
+    						<div class="d-flex">
+    							<div class="pricing">
+		    						<p class="price"><span class="price-sale">Rating: {{ comment.rating }} - {{ comment.msg }}</span></p>
+		    					</div>
+	    					</div>
+    					</div>
+    				</div>
+				</div>
+				{% endfor %}
+    		</div>
+    	</div>
     </section>
 
   <script>
